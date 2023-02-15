@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:8000/api";
+const baseURL = "http://localhost:5000/api";
 export const DATA_FAKE = "https://fakestoreapi.com/products";
 
 const axiosClient = axios.create({

@@ -1,36 +1,42 @@
-import { LinearProgress } from "@mui/material";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Box, LinearProgress } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import { AuthApi } from "../../api";
 import { setUserData } from "../../reducers/userReducer";
 import Navbar from "./Navbar";
+import UserSidebar from "./UserSidebar";
 
 const AuthLayout = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!token) {
-      setLoading(false);
-      navigate("/dang-nhap");
-    } else {
-      const getUser = async () => {
+    const getUser = async () => {
+      try {
         const user = await AuthApi.getUser();
+        setLoading(false);
         dispatch(setUserData(user));
-      };
-      getUser();
-    }
-  }, [navigate, token, dispatch]);
-  return (
-    loading && (
-      <div>
-        <Navbar />
+      } catch {
+        setLoading(false);
+        navigate("/dang-nhap");
+      }
+    };
+    getUser();
+  }, []);
+  return loading ? (
+    <Box sx={{ width: "100%" }}>
+      <LinearProgress />
+    </Box>
+  ) : (
+    <div>
+      <Navbar />
+      <Box display={"flex"}>
+        <UserSidebar />
         <Outlet />
-      </div>
-    )
+      </Box>
+    </div>
   );
 };
 
